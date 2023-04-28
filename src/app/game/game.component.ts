@@ -12,6 +12,7 @@ export class GameComponent implements OnInit {
   pickCardAnimation = false;
   currentCard: string = '';
   game: Game = new Game;
+  currentPlayer: any;
 
   constructor(public dialog: MatDialog) {}
 
@@ -41,8 +42,9 @@ export class GameComponent implements OnInit {
   openDialog(): void {
     const dialogRef = this.dialog.open(DialogAddPlayerComponent);
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+    dialogRef.afterClosed().subscribe((name: string) => {
+      this.game.players.push(name);
+      // console.log('The dialog was closed', name);
     });
   }
 
