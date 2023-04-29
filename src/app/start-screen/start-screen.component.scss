@@ -6,6 +6,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    
     img {
         height: 100vh;
     };
@@ -15,9 +16,10 @@
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 450px;
+    bottom: 80px;
     display: flex;
     justify-content: center;
+
     img {
         width: 15vw;
         height: auto;
