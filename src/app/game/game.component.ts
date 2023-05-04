@@ -1,22 +1,31 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Game } from 'src/models/game';
-import {MatDialog} from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogAddPlayerComponent } from '../dialog-add-player/dialog-add-player.component';
+import { Firestore, collection, collectionData} from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
+
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
-  styleUrls: ['./game.component.scss']
+  styleUrls: ['./game.component.scss'],
 })
 export class GameComponent implements OnInit {
+  private firestore: Firestore = inject(Firestore); // inject Cloud Firestore
   pickCardAnimation = false;
   currentCard: string = '';
   game: Game = new Game;
   currentPlayer: any;
+  itemCollection: any;
+  games$: Observable<Game[]> | undefined;
 
   constructor(public dialog: MatDialog) {}
 
   ngOnInit(): void {
+    // get a reference to the games-profile collection
+    const gamesCollection = collection(this.firestore, 'games');
+    this.games$ = collectionData(gamesCollection) as Observable<Game[]>;
     this.newGame();
   }
 
@@ -29,8 +38,6 @@ export class GameComponent implements OnInit {
     if (!this.pickCardAnimation) {
       this.currentCard = this.game.stack.pop() as string;
       this.pickCardAnimation = true;
-      // console.log('New card: ', this.currentCard);
-      // console.log('Game is ', this.game);
 
       this.game.currentPlayer++;
       this.game.currentPlayer = this.game.currentPlayer % this.game.players.length;
@@ -38,6 +45,7 @@ export class GameComponent implements OnInit {
       setTimeout(() => {
         this.game.playedCards.push(this.currentCard);
         this.pickCardAnimation = false;
+    
       }, 1000);
     }
   }
@@ -48,7 +56,6 @@ export class GameComponent implements OnInit {
     dialogRef.afterClosed().subscribe((name: string) => {
       if (name && name.length > 0) {
         this.game.players.push(name);
-        // console.log('The dialog was closed', name);
       }
     });
   }

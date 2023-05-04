@@ -1,5 +1,10 @@
-<app-player *ngFor="let player of game.players; let i = index" [ngStyle]="{'top.px': 100 + (i * 90)}" 
-    [playerActive]="i == game.currentPlayer" [name]="player" class="player-position"></app-player>
+<app-player *ngFor="let player of game.players; let i = index" [ngStyle]="{'top.px': 100 + (i * 90)}"
+    [playerActive]="i == game.currentPlayer" [name]="player" class="player-position hide-mobile"></app-player>
+<!-- This setting is applied when in mobile mode. -->
+<div class="scroll-container hide-desktop">
+  <app-player-mobile *ngFor="let player of game.players; let i = index"
+    [playerActive]="i == game.currentPlayer" [name]="player"></app-player-mobile>
+</div>
 
 <div class="field">
     <div class="card-stack">
@@ -7,15 +12,15 @@
         <img *ngFor="let c of [0, 1, 2, 3, 4], let i = index;" [ngStyle]="{'right.px': i * 5}"
             src="./../../assets/img/cards/card_cover.png">
 
-        <img (click)="takeCard()" class="top-card" style="right: 25px" 
+        <img (click)="takeCard()" class="top-card" style="right: 25px"
             src="./../../assets/img/cards/card_cover.png">
 
         <!-- Stack for played cards -->
-        <img *ngFor="let card of game.playedCards" class="played-card" 
+        <img *ngFor="let card of game.playedCards" class="played-card"
             src="./../../assets/img/cards/{{ card }}.png">
 
         <!-- Current cart (animation) -->
-        <img (click)="takeCard()" *ngIf="pickCardAnimation" class="pick-card" style="right: 25px" 
+        <img (click)="takeCard()" *ngIf="pickCardAnimation" class="pick-card" style="right: 25px"
             src="./../../assets/img/cards/{{ currentCard }}.png">
     </div>
 </div>
