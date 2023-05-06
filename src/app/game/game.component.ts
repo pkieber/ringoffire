@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Game } from 'src/models/game';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogAddPlayerComponent } from '../dialog-add-player/dialog-add-player.component';
-import { Firestore, collection, collectionData, doc, setDoc} from '@angular/fire/firestore';
+import { CollectionReference, DocumentData, Firestore, collection, collectionData, doc, setDoc} from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -40,17 +40,16 @@ export class GameComponent implements OnInit {
     this.newGame();
   }
 
+
   newGame() {
     this.game = new Game();
     console.log(this.game);
-  }
 
-  /*
-  addPlayer() {
+    // Add the new game to Firestore
+    // setDoc replaces the .add()
     const gamesCollection = collection(this.firestore, 'games');
-    setDoc(doc(gamesCollection), {name: this.todotext});
+    setDoc(doc(gamesCollection), {name: "hallo Welt TEST 123"});
   }
-  */
 
   takeCard() {
     if (!this.pickCardAnimation) {
@@ -84,3 +83,7 @@ export class GameComponent implements OnInit {
   }
 
 }
+function addDoc(gamesCollection: CollectionReference<DocumentData>, game: Game) {
+  throw new Error('Function not implemented.');
+}
+
