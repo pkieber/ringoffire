@@ -2,9 +2,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Game } from 'src/models/game';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogAddPlayerComponent } from '../dialog-add-player/dialog-add-player.component';
-import { Firestore, collection, collectionData} from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, setDoc} from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-
 
 @Component({
   selector: 'app-game',
@@ -12,19 +11,31 @@ import { Observable } from 'rxjs';
   styleUrls: ['./game.component.scss'],
 })
 export class GameComponent implements OnInit {
-  private firestore: Firestore = inject(Firestore); // inject Cloud Firestore
+
   pickCardAnimation = false;
   currentCard: string = '';
   game: Game = new Game;
   currentPlayer: any;
-  itemCollection: any;
-  games$: Observable<Game[]> | undefined;
 
-  constructor(public dialog: MatDialog) {}
+  games$: Observable<any>;
+  firestore: Firestore = inject(Firestore);
+  games!: Array<any>;
+  todotext:string = '';
+
+  constructor(public dialog: MatDialog) {
+    const gameCollection = collection(this.firestore, 'games');
+    this.games$ = collectionData(gameCollection);
+
+    this.games$.subscribe(( game ) => {
+      this.games = game;
+      console.log('Game update', game);
+    });
+  }
 
   ngOnInit(): void {
     // get a reference to the games-profile collection
     const gamesCollection = collection(this.firestore, 'games');
+
     this.games$ = collectionData(gamesCollection) as Observable<Game[]>;
     this.newGame();
   }
@@ -33,6 +44,13 @@ export class GameComponent implements OnInit {
     this.game = new Game();
     console.log(this.game);
   }
+
+  /*
+  addPlayer() {
+    const gamesCollection = collection(this.firestore, 'games');
+    setDoc(doc(gamesCollection), {name: this.todotext});
+  }
+  */
 
   takeCard() {
     if (!this.pickCardAnimation) {
@@ -45,10 +63,11 @@ export class GameComponent implements OnInit {
       setTimeout(() => {
         this.game.playedCards.push(this.currentCard);
         this.pickCardAnimation = false;
-    
+
       }, 1000);
     }
   }
+
 
   openDialog(): void {
     const dialogRef = this.dialog.open(DialogAddPlayerComponent);
@@ -58,6 +77,10 @@ export class GameComponent implements OnInit {
         this.game.players.push(name);
       }
     });
+  }
+
+  editPlayer() {
+
   }
 
 }

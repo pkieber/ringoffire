@@ -1,19 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-player-mobile',
   templateUrl: './player-mobile.component.html',
   styleUrls: ['./player-mobile.component.scss']
 })
-export class PlayerMobileComponent implements OnInit {
-
-  @Input() name: string = '';
+export class PlayerMobileComponent {
+  @Input() name!: string;
   @Input() playerActive: boolean = false;
-
-  constructor() {
-    this.name = '';
-  }
-
-  ngOnInit(): void {
-  }
+  @Input() image: 'player1.png' | undefined;
 }
