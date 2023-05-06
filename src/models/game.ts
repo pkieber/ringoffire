@@ -23,13 +23,13 @@ export class Game {
     public toJson() {
       return {
           players: this.players,
-          player_images: this.player_images,
+          //player_images: this.player_images,
           stack: this.stack,
           playedCards: this.playedCards,
           currentPlayer: this.currentPlayer,
-          pickCardAnimation: this.pickCardAnimation,
-          currentCard: this.currentCard,
-          gameOver: this.gameOver
+          //pickCardAnimation: this.pickCardAnimation,
+          //currentCard: this.currentCard,
+          //gameOver: this.gameOver
       }
   }
 

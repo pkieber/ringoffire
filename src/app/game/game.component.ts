@@ -48,7 +48,8 @@ export class GameComponent implements OnInit {
     // Add the new game to Firestore
     // setDoc replaces the .add()
     const gamesCollection = collection(this.firestore, 'games');
-    setDoc(doc(gamesCollection), {name: "hallo Welt TEST 123"});
+    setDoc(doc(gamesCollection), this.game.toJson());
+    // setDoc(doc(gamesCollection), {name: "this text will be added ..."});
   }
 
   takeCard() {
