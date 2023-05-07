@@ -105,9 +105,16 @@ app-player, app-player-mobile {
   align-items: center;
 
   img {
-    width: 300px;
+    width: 500px;
+    z-index: 90;
   }
+}
 
+.btn-new-game {
+  position: absolute;
+  left: 50%;
+  bottom: 20%;
+  z-index: 100;
 }
 
 .preload-image {

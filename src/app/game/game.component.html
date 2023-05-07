@@ -6,8 +6,11 @@
     [playerActive]="i == game.currentPlayer" [image]="game.playerImages[i]" [name]="player"></app-player-mobile>
 </div>
 <!-- Gave-over-Screen -->
-<div *ngIf="gameOver">
-  <img class="game-over" src="./assets/img/game-over.png">
+<div *ngIf="gameOver" class="game-over">
+  <img src="./assets/img/game-over.png">
+  <button mat-stroked-button color="primary" (click)="newGame()" class="btn-new-game">
+    New Game
+  </button>
 </div>
 
 <div *ngIf="!gameOver" class="field">

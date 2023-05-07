@@ -80,7 +80,8 @@ export class GameComponent implements OnInit {
    */
   newGame() {
     this.game = new Game();
-    console.log(this.game);
+    this.gameOver = false;
+    this.gameStart = false;
   }
 
   /**
