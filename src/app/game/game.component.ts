@@ -15,6 +15,7 @@ import { EditPlayerComponent } from '../edit-player/edit-player.component';
 export class GameComponent implements OnInit {
 
   game!: Game;
+  gameOver = false;
   currentPlayer: any;
 
   firestore: Firestore = inject(Firestore);
@@ -74,9 +75,12 @@ export class GameComponent implements OnInit {
   /**
    * Processes all card animations (show card, remove card from stack, change player after picking card)
    * Variables are defined in game.ts and changes are saved to Firebase.
+   * If all cards are played, game is over.
    */
   takeCard() {
-    if (!this.game.pickCardAnimation) {
+    if(this.game.stack.length == 0){
+      this.gameOver = true;
+    } else if (!this.game.pickCardAnimation) {
       this.game.currentCard = this.game.stack.pop() as string;
       this.game.pickCardAnimation = true;
 
