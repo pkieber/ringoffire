@@ -16,8 +16,8 @@ export class GameComponent implements OnInit {
 
   game!: Game;
   gameOver = false;
+  gameStart = false;
   currentPlayer: any;
-
   firestore: Firestore = inject(Firestore);
   games$!: Observable<any>;
   games!: Array<any>;
@@ -31,7 +31,6 @@ export class GameComponent implements OnInit {
     this.gameCollection = collection(this.firestore, 'games');
     this.games$ = collectionData(this.gameCollection);
     this.newGame();
-
     this.route.params.subscribe((params) => {
       this.gameId= params['id'];
       this.games$.subscribe( () => {
@@ -40,6 +39,10 @@ export class GameComponent implements OnInit {
     })
   }
 
+
+  /**
+   * Games are shown based on their individual ID.
+   */
   async getCorrectDocument() {
     let docRef = doc(this.firestore, "games" ,this.gameId);
     let docSnap = await getDoc(docRef);
@@ -47,6 +50,11 @@ export class GameComponent implements OnInit {
     this.updateServerData(data);
   }
 
+
+  /**
+   * Firebase data will be updated.
+   * @param data
+   */
   updateServerData(data: any) {
     this.game.players = data['players'];
     this.game.playerImages = data['playerImages'];
@@ -67,6 +75,9 @@ export class GameComponent implements OnInit {
   }
 
 
+  /**
+   * Starts new game.
+   */
   newGame() {
     this.game = new Game();
     console.log(this.game);
@@ -80,14 +91,13 @@ export class GameComponent implements OnInit {
   takeCard() {
     if(this.game.stack.length == 0){
       this.gameOver = true;
+      this.game.players = [];
     } else if (!this.game.pickCardAnimation) {
       this.game.currentCard = this.game.stack.pop() as string;
       this.game.pickCardAnimation = true;
-
       this.game.currentPlayer++;
       this.game.currentPlayer = this.game.currentPlayer % this.game.players.length;
       this.saveGame();
-
       setTimeout(() => {
         this.game.playedCards.push(this.game.currentCard);
         this.game.pickCardAnimation = false;
@@ -103,7 +113,6 @@ export class GameComponent implements OnInit {
    */
   editPlayer(playerId: number) {
     const dialogRef = this.dialog.open(EditPlayerComponent);
-
     dialogRef.afterClosed().subscribe((change: string) => {
       if (change) {
         if (change == 'DELETE') {
@@ -125,11 +134,13 @@ export class GameComponent implements OnInit {
    */
   openDialog(): void {
     const dialogRef = this.dialog.open(DialogAddPlayerComponent);
-
     dialogRef.afterClosed().subscribe((name: string) => {
       if (name && name.length > 0) {
         this.game.players.push(name);
         this.game.playerImages!.push('player1.png');
+        if (this.game.players.length > 1) { // Add minimum 1 player to start game.
+          this.gameStart = true;
+        }
         this.saveGame(); // Newly added player will be saved.
       }
     });
