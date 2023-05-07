@@ -101,9 +101,14 @@ export class GameComponent implements OnInit {
     const dialogRef = this.dialog.open(EditPlayerComponent);
 
     dialogRef.afterClosed().subscribe((change: string) => {
-      if (change && change.length > 0) {
-        this.game.players.push(change);
-        this.saveGame(); // Newly changed img will be saved.
+      if (change) {
+        if (change == 'DELETE') {
+          this.game.players.splice(i, 1);
+          this.game.playerImages.splice(i, 1);
+        } else {
+          this.game.playerImages[i] = change;
+        }
+        this.saveGame();
       }
     });
   }
@@ -111,6 +116,7 @@ export class GameComponent implements OnInit {
 
   /**
    * Opens a dialog window to add new player.
+   * Default pic will be added.
    * Player will be saved after closing the window.
    */
   openDialog(): void {

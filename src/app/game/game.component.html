@@ -3,7 +3,7 @@
 <!-- This setting is applied when in mobile mode. -->
 <div class="scroll-container hide-desktop">
   <app-player-mobile (click)="editPlayer(i)" *ngFor="let player of game.players; let i = index"
-    [playerActive]="i == game.currentPlayer" [name]="player"></app-player-mobile>
+    [playerActive]="i == game.currentPlayer" [image]="game.playerImages[i]" [name]="player"></app-player-mobile>
 </div>
 
 <div class="field">
