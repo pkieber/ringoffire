@@ -2,8 +2,10 @@ import { Component, OnInit, inject } from '@angular/core';
 import { Game } from 'src/models/game';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogAddPlayerComponent } from '../dialog-add-player/dialog-add-player.component';
-import { CollectionReference, DocumentData, Firestore, collection, collectionData, doc, setDoc} from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, getDoc, updateDoc} from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { EditPlayerComponent } from '../edit-player/edit-player.component';
 
 @Component({
   selector: 'app-game',
@@ -12,79 +14,114 @@ import { Observable } from 'rxjs';
 })
 export class GameComponent implements OnInit {
 
-  pickCardAnimation = false;
-  currentCard: string = '';
-  game: Game = new Game;
+  game!: Game;
   currentPlayer: any;
 
-  games$: Observable<any>;
   firestore: Firestore = inject(Firestore);
+  games$!: Observable<any>;
   games!: Array<any>;
-  todotext:string = '';
+  gameCollection: any;
+  gameId!: string;
 
-  constructor(public dialog: MatDialog) {
-    const gameCollection = collection(this.firestore, 'games');
-    this.games$ = collectionData(gameCollection);
-
-    this.games$.subscribe(( game ) => {
-      this.games = game;
-      console.log('Game update', game);
-    });
-  }
+  constructor(public dialog: MatDialog, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
     // get a reference to the games-profile collection
-    const gamesCollection = collection(this.firestore, 'games');
-
-    this.games$ = collectionData(gamesCollection) as Observable<Game[]>;
+    this.gameCollection = collection(this.firestore, 'games');
+    this.games$ = collectionData(this.gameCollection);
     this.newGame();
+
+    this.route.params.subscribe((params) => {
+      this.gameId= params['id'];
+      this.games$.subscribe( () => {
+        this.getCorrectDocument();
+      })
+    })
+  }
+
+  async getCorrectDocument() {
+    let docRef = doc(this.firestore, "games" ,this.gameId);
+    let docSnap = await getDoc(docRef);
+    let data = await docSnap.data();
+    this.updateServerData(data);
+  }
+
+  updateServerData(data: any) {
+    this.game.players = data['players'];
+    this.game.playerImages = data['playerImages'];
+    this.game.stack = data['stack'];
+    this.game.playedCards = data['playedCards'];
+    this.game.currentPlayer = data['currentPlayer'];
+    this.game.pickCardAnimation = data['pickCardAnimation'];
+    this.game.currentCard = data['currentCard'];
+  }
+
+
+  /**
+   * Saves the game.
+   */
+  saveGame() {
+    let docRef = doc(this.firestore, "games", this.gameId);
+    updateDoc(docRef, this.game.toJson());
   }
 
 
   newGame() {
     this.game = new Game();
     console.log(this.game);
-
-    // Add the new game to Firestore
-    // setDoc replaces the .add()
-    const gamesCollection = collection(this.firestore, 'games');
-    setDoc(doc(gamesCollection), this.game.toJson());
-    // setDoc(doc(gamesCollection), {name: "this text will be added ..."});
   }
 
+  /**
+   * Processes all card animations (show card, remove card from stack, change player after picking card)
+   * Variables are defined in game.ts and changes are saved to Firebase.
+   */
   takeCard() {
-    if (!this.pickCardAnimation) {
-      this.currentCard = this.game.stack.pop() as string;
-      this.pickCardAnimation = true;
+    if (!this.game.pickCardAnimation) {
+      this.game.currentCard = this.game.stack.pop() as string;
+      this.game.pickCardAnimation = true;
 
       this.game.currentPlayer++;
       this.game.currentPlayer = this.game.currentPlayer % this.game.players.length;
+      this.saveGame();
 
       setTimeout(() => {
-        this.game.playedCards.push(this.currentCard);
-        this.pickCardAnimation = false;
-
+        this.game.playedCards.push(this.game.currentCard);
+        this.game.pickCardAnimation = false;
+        this.saveGame();
       }, 1000);
     }
   }
 
 
+  /**
+   * Opens a dialog to edit player img.
+   * @param i
+   */
+  editPlayer(i: number) {
+    const dialogRef = this.dialog.open(EditPlayerComponent);
+
+    dialogRef.afterClosed().subscribe((change: string) => {
+      if (change && change.length > 0) {
+        this.game.players.push(change);
+        this.saveGame(); // Newly changed img will be saved.
+      }
+    });
+  }
+
+
+  /**
+   * Opens a dialog window to add new player.
+   * Player will be saved after closing the window.
+   */
   openDialog(): void {
     const dialogRef = this.dialog.open(DialogAddPlayerComponent);
 
     dialogRef.afterClosed().subscribe((name: string) => {
       if (name && name.length > 0) {
         this.game.players.push(name);
+        this.game.playerImages!.push('player1.png');
+        this.saveGame(); // Newly added player will be saved.
       }
     });
   }
-
-  editPlayer() {
-
-  }
-
 }
-function addDoc(gamesCollection: CollectionReference<DocumentData>, game: Game) {
-  throw new Error('Function not implemented.');
-}
-

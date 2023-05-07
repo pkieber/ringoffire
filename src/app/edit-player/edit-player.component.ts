@@ -7,4 +7,5 @@ import { Component } from '@angular/core';
 })
 export class EditPlayerComponent {
 
+  playerImages = [  "player1.png",  "player2.png",  "player3.png",  "player4.png"];
 }

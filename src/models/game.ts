@@ -1,12 +1,13 @@
 export class Game {
     public players: string[]  = [];
+    public playerImages: string[] = [];
     public stack: string[]  = [];
     public playedCards: string[] = [];
     public currentPlayer: number = 0;
-    public player_images: string[] = [];
     public pickCardAnimation: boolean = false;
     public currentCard: string = '';
-    public gameOver: boolean = false;
+allPlayerPics: any;
+    //public gameOver: boolean = false;
 
 
     constructor() {
@@ -19,16 +20,19 @@ export class Game {
         shuffle(this.stack);
     }
 
-    // creates Json with variable which are defined above
+    /***
+     *  Creates Json with variable which are defined above.
+     *  This variables are stored in Firebase.
+     */
     public toJson() {
       return {
           players: this.players,
-          //player_images: this.player_images,
+          playerImages: this.playerImages,
           stack: this.stack,
           playedCards: this.playedCards,
           currentPlayer: this.currentPlayer,
-          //pickCardAnimation: this.pickCardAnimation,
-          //currentCard: this.currentCard,
+          pickCardAnimation: this.pickCardAnimation,
+          currentCard: this.currentCard,
           //gameOver: this.gameOver
       }
   }
