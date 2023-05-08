@@ -24,3 +24,32 @@ body {
     display: none;
   }
 }
+
+.mdc-dialog__surface {
+  border-width: 3px;
+  border-style: solid;
+  border-image: linear-gradient(to right, darkblue, darkorchid) 1;
+}
+
+/* ===== Scrollbar CSS ===== */
+
+  /* Firefox */
+  * {
+    scrollbar-width: auto;
+    scrollbar-color:rgb(65, 46, 75) #464444;
+  }
+
+  /* Chrome, Edge, and Safari */
+  *::-webkit-scrollbar {
+    width: 16px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: rgb(42, 42, 62);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: rgb(65, 46, 75);
+    border-radius: 10px;
+    border: 0.3px solid darkorchid;
+  }

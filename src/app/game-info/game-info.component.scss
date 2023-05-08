@@ -3,7 +3,12 @@
 }
 
 mat-card {
+  border-width: 5px;
+  border-style: solid;
+  border-image: linear-gradient(to right, darkblue, darkorchid) 1;
+
   @media (max-width: 720px) {
     min-height: 120px;
+    padding-right: 70px;
   }
 }
