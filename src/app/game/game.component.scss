@@ -63,6 +63,11 @@
     right: 32px;
     bottom: 32px;
     background: linear-gradient(to right, darkblue, darkorchid);
+
+    &:hover {
+      filter: brightness(1.25);
+      cursor: pointer;
+  }
 }
 
 .pin-bottom {
@@ -108,18 +113,34 @@ app-player, app-player-mobile {
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: darkblue;
 
   img {
     width: 500px;
     z-index: 90;
   }
+
+  @media (max-width: 720px) {
+    img {
+      width: 350px;
+    }
+  }
 }
 
 .btn-new-game {
   position: absolute;
-  left: 50%;
   bottom: 20%;
   z-index: 100;
+  width: 300px;
+  height: 80px;
+  background: linear-gradient(to right, darkblue, darkorchid);
+  color: white !important;
+  font-size: 20px;
+
+  &:hover {
+    filter: brightness(1.25);
+    cursor: pointer;
+  }
 }
 
 .preload-image {
