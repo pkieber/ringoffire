@@ -5,6 +5,11 @@ import { Component, Input, OnChanges } from '@angular/core';
   templateUrl: './game-info.component.html',
   styleUrls: ['./game-info.component.scss']
 })
+
+/**
+ * Shows the rules of the game.
+ * Each card has a new rule.
+ */
 export class GameInfoComponent implements OnChanges {
   cardAction = [
     { title: 'Waterfall', description: 'Everyone has to start drinking at the same time. As soon as player 1 stops drinking, player 2 may stop drinking. Player 3 may stop as soon as player 2 stops drinking, and so on.' },
@@ -27,6 +32,11 @@ export class GameInfoComponent implements OnChanges {
   @Input() card!: string;
 
 
+  /**
+   * Updates the 'title' and 'description' properties of the component based on the current 'card' input.
+   * Method is called whenever the input properties of the component change, ...
+   * ... allowing the component to update its state based on changes to external data.
+   */
   ngOnChanges(): void {
     if (this.card) {
       // console.log('current Card is: ', this.card);

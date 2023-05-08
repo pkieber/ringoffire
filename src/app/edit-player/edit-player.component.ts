@@ -7,7 +7,6 @@ import { MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./edit-player.component.scss']
 })
 export class EditPlayerComponent {
-
   playerImages = [  "player1.png",  "player2.png",  "player3.png",  "player4.png"];
 
   constructor(public dialogRef: MatDialogRef<EditPlayerComponent>) {}

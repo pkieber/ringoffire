@@ -13,7 +13,6 @@ import { EditPlayerComponent } from '../edit-player/edit-player.component';
   styleUrls: ['./game.component.scss'],
 })
 export class GameComponent implements OnInit {
-
   game!: Game;
   gameOver = false;
   gameStart = false;
@@ -26,8 +25,14 @@ export class GameComponent implements OnInit {
 
   constructor(public dialog: MatDialog, private route: ActivatedRoute) {}
 
+
+  /**
+   * Loading data from database.
+   * Get a reference to the games-profile collection.
+   * The subscribe() method is used to subscribe to an Observable and receive the emitted data.
+   * An Observable is an asynchronous data stream that can emit zero or more values over time.
+   */
   ngOnInit(): void {
-    // get a reference to the games-profile collection
     this.gameCollection = collection(this.firestore, 'games');
     this.games$ = collectionData(this.gameCollection);
     this.newGame();
@@ -41,7 +46,10 @@ export class GameComponent implements OnInit {
 
 
   /**
-   * Games are shown based on their individual ID.
+   * Creates a reference to the document with the ID this.gameId in the games collection in Firestore.
+   * Retrieves the document snapshot from Firestore using the getDoc() method.
+   * Extracts the data from the document snapshot using the data() method.
+   * Passes the retrieved data to the updateServerData() method.
    */
   async getCorrectDocument() {
     let docRef = doc(this.firestore, "games" ,this.gameId);
@@ -52,7 +60,7 @@ export class GameComponent implements OnInit {
 
 
   /**
-   * Firebase data will be updated.
+   * Updates several properties of the this.game object with values from the data object.
    * @param data
    */
   updateServerData(data: any) {
@@ -67,7 +75,7 @@ export class GameComponent implements OnInit {
 
 
   /**
-   * Saves the game.
+   * Saves the game and ensures that the Firestore document is updated with the latest state of the game object.
    */
   saveGame() {
     let docRef = doc(this.firestore, "games", this.gameId);
@@ -76,7 +84,7 @@ export class GameComponent implements OnInit {
 
 
   /**
-   * Starts new game.
+   * Resets the state of the game to its initial values, ready to start a new game and starts new game.
    */
   newGame() {
     this.game = new Game();
@@ -85,7 +93,7 @@ export class GameComponent implements OnInit {
   }
 
   /**
-   * Processes all card animations (show card, remove card from stack, change player after picking card)
+   * Processes all card animations (show card, remove card from stack, change player after picking card).
    * Variables are defined in game.ts and changes are saved to Firebase.
    * If all cards are played, game is over.
    */
@@ -109,7 +117,8 @@ export class GameComponent implements OnInit {
 
 
   /**
-   * Opens a dialog to edit player img.
+   * Opens a dialog to edit player.
+   * Let's you delete players and change images.
    * @param i
    */
   editPlayer(playerId: number) {

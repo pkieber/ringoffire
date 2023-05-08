@@ -17,6 +17,10 @@ export class StartScreenComponent {
 
   }
 
+  /**
+   * Creates a new game object, adds it to the 'games' collection in Firestore, and navigates to a new URL...
+   * ... that includes the ID of the new document as a parameter.
+   */
   newGame() {
     // start game
     let game = new Game;

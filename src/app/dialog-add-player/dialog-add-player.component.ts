@@ -14,8 +14,11 @@ export class DialogAddPlayerComponent implements OnInit{
   ngOnInit(): void {
   }
 
+  /**
+   * Used to close a dialog window.
+   * Method has a return type 'void', which means that it doesn't return any value.
+   */
   onNoClick(): void {
     this.dialogRef.close();
   }
-
 }
