@@ -39,7 +39,7 @@ export class GameComponent implements OnInit {
     this.route.params.subscribe((params) => {
       this.gameId= params['id'];
       this.games$.subscribe( () => {
-        this.getCorrectDocument();
+        this.getDocReference();
       })
     })
   }
@@ -51,7 +51,7 @@ export class GameComponent implements OnInit {
    * Extracts the data from the document snapshot using the data() method.
    * Passes the retrieved data to the updateServerData() method.
    */
-  async getCorrectDocument() {
+  async getDocReference() {
     let docRef = doc(this.firestore, "games" ,this.gameId);
     let docSnap = await getDoc(docRef);
     let data = await docSnap.data();
@@ -85,12 +85,17 @@ export class GameComponent implements OnInit {
 
   /**
    * Resets the state of the game to its initial values, ready to start a new game and starts new game.
+   * Once a new game is started, a dialog window to add new players will be shown after a delay.
    */
   newGame() {
     this.game = new Game();
     this.gameOver = false;
     this.gameStart = false;
+    setTimeout(() => {
+      this.openDialog();
+    }, 1500);
   }
+
 
   /**
    * Processes all card animations (show card, remove card from stack, change player after picking card).
@@ -98,36 +103,45 @@ export class GameComponent implements OnInit {
    * If all cards are played, game is over.
    */
   takeCard() {
-    if(this.game.stack.length == 0){
+    if (this.game.stack.length === 0) {
       this.gameOver = true;
-      this.game.players = [];
+      this.game.players = []; // reset players
+      this.game.playerImages = [];
     } else if (!this.game.pickCardAnimation) {
-      this.game.currentCard = this.game.stack.pop() as string;
-      this.game.pickCardAnimation = true;
-      this.game.currentPlayer++;
-      this.game.currentPlayer = this.game.currentPlayer % this.game.players.length;
-      this.saveGame();
-      setTimeout(() => {
-        this.game.playedCards.push(this.game.currentCard);
-        this.game.pickCardAnimation = false;
-        this.saveGame();
-      }, 1000);
+      this.playCardAnimation();
     }
+  }
+
+
+/**
+ * Plays the card animation.
+ * It updates the game state, saves it to the Firestore database, and performs the card animation.
+ */
+  playCardAnimation() {
+    this.game.currentCard = this.game.stack.pop() as string;
+    this.game.pickCardAnimation = true;
+    this.game.currentPlayer = (this.game.currentPlayer + 1) % this.game.players.length;
+    this.saveGame();
+    setTimeout(() => {
+      this.game.playedCards.push(this.game.currentCard);
+      this.game.pickCardAnimation = false;
+      this.saveGame();
+    }, 1000);
   }
 
 
   /**
    * Opens a dialog to edit player.
    * Let's you delete players and change images.
-   * @param i
+   * @param playerId The ID of the player to edit.
    */
   editPlayer(playerId: number) {
     const dialogRef = this.dialog.open(EditPlayerComponent);
     dialogRef.afterClosed().subscribe((change: string) => {
       if (change) {
         if (change == 'DELETE') {
-          this.game.players.splice(playerId, 1); // deletes player
-          this.game.playerImages.splice(playerId, 1); // deletes image
+          this.game.players.splice(playerId, 1);
+          this.game.playerImages.splice(playerId, 1);
         } else {
           this.game.playerImages[playerId] = change;
         }
@@ -148,10 +162,10 @@ export class GameComponent implements OnInit {
       if (name && name.length > 0) {
         this.game.players.push(name);
         this.game.playerImages!.push('player1.png');
-        if (this.game.players.length > 1) { // Add minimum 1 player to start game.
+        if (this.game.players.length >= 1) { // Add a player to start game.
           this.gameStart = true;
         }
-        this.saveGame(); // Newly added player will be saved.
+        this.saveGame();
       }
     });
   }
